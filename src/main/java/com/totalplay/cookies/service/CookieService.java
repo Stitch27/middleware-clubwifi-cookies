@@ -1,13 +1,10 @@
 package com.totalplay.cookies.service;
 
-import java.util.HashMap;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-
+import com.totalplay.cookies.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
-import com.totalplay.cookies.model.RequestModel;
 import com.totalplay.cookies.entity.CookieEntity;
 import com.totalplay.cookies.repository.CookieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,100 +15,87 @@ public class CookieService {
     @Autowired
     private CookieRepository cookieRepository;
 
-    public ResponseEntity<Object> getInformation(String mac) {
+    public ResponseEntity<ResponseGet> getInformation(String mac) {
 
-        HashMap<String, String> results = new LinkedHashMap<>();
-        HashMap<String, Object> response = new LinkedHashMap<>();
+        Result result = new Result();
+        ResponseGet responseGet = new ResponseGet();
+        Information information = new Information();
 
-        if (mac != null) {
+        CookieEntity cookieEntity = cookieRepository.getCookie(mac);
 
-            CookieEntity cookieEntity = cookieRepository.getCookie(mac);
-
-            if (cookieEntity != null) {
-
-                HashMap<String, String> information = new LinkedHashMap<>();
-
-                results.put("code", "100");
-                results.put("description", "Petición realizada con éxito.");
-
-                information.put("identifier", cookieEntity.getIdentifier().toString());
-                information.put("code", cookieEntity.getCode());
-                information.put("address", cookieEntity.getAddress());
-                information.put("subscriber", cookieEntity.getSubscriber());
-                information.put("firstCookie", cookieEntity.getFirstCookie());
-                information.put("secondCookie", cookieEntity.getSecondCookie());
-                information.put("creationDate", cookieEntity.getCreationDate().toString());
-
-                response.put("results", results);
-                response.put("information", information);
-
-                return new ResponseEntity(response, HttpStatus.OK);
-
-            } else {
-
-                results.put("code", "300");
-                results.put("description", "No se encontrarón coincidencias.");
-
-                response.put("results", results);
-
-                return new ResponseEntity(response, HttpStatus.NOT_FOUND);
+        if (cookieEntity != null) {
 
 
-            }
+            result.setCode("100");
+            result.setDescription("Petición realizada con éxito.");
+
+            information.setIdentifier(cookieEntity.getIdentifier().toString());
+            information.setCode(cookieEntity.getCode());
+            information.setAddress(cookieEntity.getAddress());
+            information.setSubscriber(cookieEntity.getSubscriber());
+            information.setFirstCookie(cookieEntity.getFirstCookie());
+            information.setSecondCookie(cookieEntity.getSecondCookie());
+            information.setCreationDate(cookieEntity.getCreationDate().toString());
+
+            responseGet.setResult(result);
+            responseGet.setInformation(information);
+
+            return new ResponseEntity(responseGet, HttpStatus.OK);
 
         } else {
 
-            results.put("code", "200");
-            results.put("description", "Ingresar mac.");
+            result.setCode("300");
+            result.setDescription("No se encontrarón coincidencias.");
 
-            response.put("results", results);
+            responseGet.setResult(result);
+            responseGet.setInformation(information);
 
-            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseGet, HttpStatus.NOT_FOUND);
 
         }
 
     }
 
-    public ResponseEntity<Object> regUpdInf(RequestModel requestModel) {
+    public ResponseEntity<ResponsePost> regUpdInf(RequestPost requestPost) {
 
         boolean registerFlag = false;
 
-        HashMap<String, String> results = new LinkedHashMap<>();
-        HashMap<String, Object> response = new LinkedHashMap<>();
+        Result result = new Result();
+        ResponsePost responsePost = new ResponsePost();
 
         try {
 
-            LocalDateTime time = LocalDateTime.now();
+            LocalDateTime date = LocalDateTime.now();
 
-            if (!requestModel.getMac().trim().isEmpty() && !requestModel.getCode().trim().isEmpty() &&
-                    !requestModel.getAddress().trim().isEmpty() && !requestModel.getSubscriber().trim().isEmpty() &&
-                    !requestModel.getFirstCookie().trim().isEmpty() && !requestModel.getSecondCookie().trim().isEmpty()) {
+            if (!requestPost.getMac().trim().isEmpty() && !requestPost.getCode().trim().isEmpty() &&
+                    !requestPost.getAddress().trim().isEmpty() && !requestPost.getSubscriber().trim().isEmpty() &&
+                    !requestPost.getFirstCookie().trim().isEmpty() && !requestPost.getSecondCookie().trim().isEmpty()) {
 
                 registerFlag = true;
 
-                CookieEntity cookieEntity = cookieRepository.getCookie(requestModel.getMac().trim());
+                CookieEntity cookieEntity = cookieRepository.getCookie(requestPost.getMac().trim());
 
                 if (cookieEntity != null) {
 
-                    Integer result = cookieRepository.updateCookie(requestModel.getCode().trim(), requestModel.getAddress().trim(),
-                            requestModel.getSubscriber().trim(), time, requestModel.getFirstCookie().trim(),
-                            requestModel.getSecondCookie().trim(), requestModel.getMac().trim());
+                    Integer consult = cookieRepository.updateCookie(requestPost.getCode().trim(), requestPost.getAddress().trim(),
+                            requestPost.getSubscriber().trim(), date, requestPost.getFirstCookie().trim(),
+                            requestPost.getSecondCookie().trim(), requestPost.getMac().trim());
 
-                    if (result == 1) {
+                    if (consult == 1) {
 
-                        results.put("code", "100");
-                        results.put("description", "Petición realizada con éxito.");
-                        response.put("results", results);
+                        result.setCode("100");
+                        result.setDescription("Petición realizada con éxito.");
+                        responsePost.setResult(result);
 
-                        return new ResponseEntity(response, HttpStatus.ACCEPTED);
+                        return new ResponseEntity(responsePost, HttpStatus.ACCEPTED);
 
                     } else {
 
-                        results.put("code", "300");
-                        results.put("description", "Sin cambios realizados.");
-                        response.put("results", results);
+                        result.setCode("300");
+                        result.setDescription("Sin cambios realizados.");
+                        responsePost.setResult(result);
 
-                        return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+                        return new ResponseEntity(responsePost, HttpStatus.BAD_REQUEST);
 
                     }
 
@@ -121,58 +105,58 @@ public class CookieService {
 
                     if (identifier != null) {
 
-                        cookieRepository.registerCookie((identifier + 1), requestModel.getMac().trim(), requestModel.getCode().trim(),
-                                requestModel.getAddress().trim(), requestModel.getSubscriber().trim(),
-                                requestModel.getFirstCookie().trim(), requestModel.getSecondCookie().trim(), time);
+                        cookieRepository.registerCookie((identifier + 1), requestPost.getMac().trim(), requestPost.getCode().trim(),
+                                requestPost.getAddress().trim(), requestPost.getSubscriber().trim(),
+                                requestPost.getFirstCookie().trim(), requestPost.getSecondCookie().trim(), date);
 
-                        results.put("code", "100");
-                        results.put("description", "Petición realizada con éxito.");
-                        response.put("results", results);
+                        result.setCode("100");
+                        result.setDescription("Petición realizada con éxito.");
+                        responsePost.setResult(result);
 
-                        return new ResponseEntity(response, HttpStatus.ACCEPTED);
+                        return new ResponseEntity(responsePost, HttpStatus.ACCEPTED);
 
                     } else {
 
-                        cookieRepository.registerCookie(Long.valueOf(1), requestModel.getMac().trim(), requestModel.getCode().trim(),
-                                requestModel.getAddress().trim(), requestModel.getSubscriber().trim(),
-                                requestModel.getFirstCookie().trim(), requestModel.getSecondCookie().trim(), time);
+                        cookieRepository.registerCookie(Long.valueOf(1), requestPost.getMac().trim(), requestPost.getCode().trim(),
+                                requestPost.getAddress().trim(), requestPost.getSubscriber().trim(),
+                                requestPost.getFirstCookie().trim(), requestPost.getSecondCookie().trim(), date);
 
-                        results.put("code", "100");
-                        results.put("description", "Petición realizada con éxito.");
-                        response.put("results", results);
+                        result.setCode("100");
+                        result.setDescription("Petición realizada con éxito.");
+                        responsePost.setResult(result);
 
-                        return new ResponseEntity(response, HttpStatus.ACCEPTED);
+                        return new ResponseEntity(responsePost, HttpStatus.ACCEPTED);
 
                     }
 
                 }
 
             } else {
-                results.put("code", "200");
-                results.put("description", "Ingresar toda la información solicitada.");
-                response.put("results", results);
+                result.setCode("200");
+                result.setDescription("Ingresar toda la información solicitada.");
+                responsePost.setResult(result);
 
-                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(responsePost, HttpStatus.BAD_REQUEST);
             }
 
         } catch (Exception e) {
 
-            if(registerFlag){
+            if (registerFlag) {
 
-                results.put("code", "400");
-                results.put("description", "Excepción al registrar o actualizar cookie.");
-                response.put("results", results);
+                result.setCode("400");
+                result.setDescription("Excepción al tratar de registrar o actualizar cookie.");
+                responsePost.setResult(result);
 
-                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(responsePost, HttpStatus.BAD_REQUEST);
 
-            }else{
+            } else {
 
-                results.put("code", "-51");
-                results.put("description", "Exepción en la solicitud.");
+                result.setCode("-51");
+                result.setDescription("Exepción en la solicitud.");
 
-                response.put("results", results);
+                responsePost.setResult(result);
 
-                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(responsePost, HttpStatus.BAD_REQUEST);
 
             }
 

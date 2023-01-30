@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 @Transactional
-public interface CookieRepository extends JpaRepository<CookieEntity, Long> {
+public interface CookieRepository extends JpaRepository<CookieEntity, Long>{
 
     @Query(value = "SELECT * FROM TPBANKOWNER.REGISTRATION_COOKIES_CLUB_WIFI WHERE RCCW_MAC = :mac", nativeQuery = true)
     CookieEntity getCookie(@Param("mac") String mac);

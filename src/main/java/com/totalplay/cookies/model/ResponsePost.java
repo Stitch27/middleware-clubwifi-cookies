@@ -1,10 +1,13 @@
 package com.totalplay.cookies.model;
 
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
-public class ResponsePostModel {
+@Schema(title = "Salida (Post)", description = "Parametros de salida del método post.", required = true)
+public class ResponsePost {
 
-    private ResultModel resultModel;
+    @Schema(title = "Resultado", description = "Parametros del resultado.")
+    private Result result;
 
 }

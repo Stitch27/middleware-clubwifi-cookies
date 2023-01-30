@@ -4,8 +4,8 @@ import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
-@Schema(title = "Entrada", description = "Parametros de entrada del método get.", required = true)
-public class RequestGet {
+@Schema(title = "Entrada (Post)", description = "Parametros de entrada del método post.", required = true)
+public class RequestPost {
 
     @Schema(description = "Código del suscriptor.", example = "xxZZ00@@--AA")
     private String code;

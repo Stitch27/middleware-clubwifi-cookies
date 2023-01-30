@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "REGISTRATION_COOKIES_CLUB_WIFI", schema = "TPBANKOWNER")
+@Table(name = "REGISTRATION_COOKIES_CLUB_WIFI")
 public class CookieEntity implements Serializable {
 
     @Id

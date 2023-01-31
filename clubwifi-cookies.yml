@@ -31,7 +31,7 @@ spec:
                   key: password
           envFrom:
             - configMapRef:
-                name: clubwifi-cookies
+                name: clubwifi-config
           imagePullPolicy: Always
           ports:
             - containerPort: 8164

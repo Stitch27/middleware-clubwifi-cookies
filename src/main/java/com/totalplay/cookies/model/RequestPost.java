@@ -7,17 +7,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(title = "Entrada (Post)", description = "Parametros de entrada del método post.", required = true)
 public class RequestPost {
 
-    @Schema(description = "Código del suscriptor.", example = "xxZZ00@@--AA")
+    @Schema(description = "Código del suscriptor.")
     private String code;
-    @Schema(description = "Dirección del suscriptor.", example = "10.118.12.57")
+    @Schema(description = "Dirección del suscriptor.")
     private String address;
-    @Schema(description = "Suscriptor de red.", example = "0102058895@tpz")
+    @Schema(description = "Suscriptor de red.")
     private String subscriber;
-    @Schema(description = "Primera cookie.", example = "tt9911..@@VV")
+    @Schema(description = "Primera cookie.")
     private String firstCookie;
-    @Schema(description = "Segunda cookie.", example = "kk++ll<<00ss")
+    @Schema(description = "Segunda cookie.")
     private String secondCookie;
-    @Schema(description = "Mac del dispositivo en red.", example = "a0:1b:c2:3d:e4:5f")
+    @Schema(description = "Mac del dispositivo en red.")
     private String mac;
 
 }

@@ -1,13 +1,10 @@
 package com.totalplay.cookies.service;
 
 import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.time.LocalDateTime;
-
 import org.apache.http.HttpResponse;
 import com.totalplay.cookies.model.*;
 import org.apache.http.util.EntityUtils;
@@ -46,6 +43,7 @@ public class CookieService {
         Result result = new Result();
         ResponseGet responseGet = new ResponseGet();
         Information information = new Information();
+        CookieEntity cookieEntity = new CookieEntity();
 
         if (mac != null && !mac.trim().isEmpty()) {
 
@@ -53,7 +51,22 @@ public class CookieService {
 
             if (!resultDecrypt.equals("0")) {
 
-                CookieEntity cookieEntity = cookieRepository.getCookie(resultDecrypt);
+                try{
+
+                    cookieEntity = cookieRepository.getCookie(resultDecrypt);
+
+                }catch(Exception e){
+
+                    result.setCode("400");
+                    result.setDescription("Excepción al tratar de consultar información de la mac.");
+
+                    responseGet.setResult(result);
+                    responseGet.setInformation(information);
+
+                    return new ResponseEntity(responseGet, HttpStatus.NOT_FOUND);
+
+                }
+
 
                 if (cookieEntity != null) {
 
@@ -81,7 +94,7 @@ public class CookieService {
 
                     } else {
 
-                        result.setCode("500");
+                        result.setCode("600");
                         result.setDescription("Excepción al tratar de encriptar los valores de respuesta.");
 
                         responseGet.setResult(result);
@@ -93,7 +106,7 @@ public class CookieService {
 
                 } else {
 
-                    result.setCode("400");
+                    result.setCode("500");
                     result.setDescription("No se encontrarón coincidencias.");
 
                     responseGet.setResult(result);
@@ -132,6 +145,7 @@ public class CookieService {
 
         Result result = new Result();
         ResponsePost responsePost = new ResponsePost();
+        CookieEntity cookieEntity = new CookieEntity();
 
         try {
 
@@ -146,7 +160,19 @@ public class CookieService {
 
                     LocalDateTime date = LocalDateTime.now();
 
-                    CookieEntity cookieEntity = cookieRepository.getCookie(macGeneral);
+                    try{
+
+                        cookieEntity = cookieRepository.getCookie(macGeneral);
+
+                    }catch(Exception e){
+
+                        result.setCode("400");
+                        result.setDescription("Excepción al consultar la información de la mac.");
+                        responsePost.setResult(result);
+
+                        return new ResponseEntity(responsePost, HttpStatus.NOT_FOUND);
+
+                    }
 
                     if (cookieEntity != null) {
 
@@ -163,7 +189,7 @@ public class CookieService {
 
                         } else {
 
-                            result.setCode("400");
+                            result.setCode("600");
                             result.setDescription("Sin cambios realizados.");
                             responsePost.setResult(result);
 
@@ -173,7 +199,24 @@ public class CookieService {
 
                     } else {
 
-                        Long identifier = cookieRepository.maxValue();
+                        Long identifier = new Long(0);
+
+                        try{
+
+                            identifier = cookieRepository.maxValue();
+
+                        }catch(Exception e){
+
+                            result.setCode("700");
+                            result.setDescription("Excepción al consultar el identificador.");
+                            responsePost.setResult(result);
+
+                            return new ResponseEntity(responsePost, HttpStatus.NOT_FOUND);
+
+
+                        }
+
+
 
                         if (identifier != null) {
 

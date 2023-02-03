@@ -39,26 +39,26 @@ spec:
         - name: default-secret
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: clubwifi-cookies
-#  namespace: middleware-clubwifi
-#  labels:
-#    app: clubwifi-cookies
-#  annotations:
-#    kubernetes.io/elb.class: union
-#    kubernetes.io/elb.id: 3ae3d247-dc04-42c0-a468-a16aeb63e078
-#    kubernetes.io/elb.lb-algorithm: ROUND_ROBIN
-#    kubernetes.io/elb.health-check-flag: 'off'
-#spec:
-#  ports:
-#    - port: 8164
-#      targetPort: 8164
-#      protocol: TCP
-#  selector:
-#    app: clubwifi-cookies
-#  type: LoadBalancer
-#  loadBalancerIP: 10.218.46.248
-#  externalTrafficPolicy: Cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clubwifi-cookies
+  namespace: middleware-clubwifi
+  labels:
+    app: clubwifi-cookies
+  annotations:
+    kubernetes.io/elb.class: union
+    kubernetes.io/elb.id: 3ae3d247-dc04-42c0-a468-a16aeb63e078
+    kubernetes.io/elb.lb-algorithm: ROUND_ROBIN
+    kubernetes.io/elb.health-check-flag: 'off'
+spec:
+  ports:
+    - port: 8164
+      targetPort: 8164
+      protocol: TCP
+  selector:
+    app: clubwifi-cookies
+  type: LoadBalancer
+  loadBalancerIP: 10.218.46.248
+  externalTrafficPolicy: Cluster
